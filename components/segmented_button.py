@@ -6,7 +6,7 @@ class SegmentedButton(ctk.CTkFrame):
     def __init__(self, master, test_number=1, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
 
-        self.grid_rowconfigure(0, weight=0)   # segmented button row
+        self.grid_rowconfigure(0, weight=1)   # segmented button row
         self.grid_rowconfigure(1, weight=1)   # frame row expands
         self.grid_columnconfigure(0, weight=1)
 
@@ -28,9 +28,6 @@ class SegmentedButton(ctk.CTkFrame):
         self.show_frame("Client Information")
 
     def show_frame(self, value):
-        self.info_frame.grid_forget()
-        self.test_frame.grid_forget()
-
         if value == "Client Information":
             self.info_frame.grid(row=1, column=0, sticky="nsew")
         elif value == "Test":
