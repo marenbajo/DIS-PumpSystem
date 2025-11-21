@@ -7,7 +7,7 @@ class TimerFrame(ctk.CTkFrame):
         super().__init__(master, fg_color="transparent", **kwargs)
 
         # Use provided intervals or default
-        self.time_intervals = time_intervals or [1,3,5,7,10,15,20,25,30,35,40,50,60]
+        self.time_intervals = time_intervals
         self.current_index = 0
         self.remaining_minutes = self.time_intervals[self.current_index]
         self.running = False

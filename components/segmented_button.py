@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from components.customer_info_frame import InfoFrame
-from components.step_frame import StepFrame
+from components.step_reco_tab import StepRecoTab
 
 class SegmentedButton(ctk.CTkFrame):
     def __init__(self, master, test_number=1, **kwargs):
@@ -24,7 +24,7 @@ class SegmentedButton(ctk.CTkFrame):
         self.segmented_button.grid(row=0, column=0, sticky="ew", pady=10)
 
         self.info_frame = InfoFrame(self, test_number)
-        self.test_frame = StepFrame(self)
+        self.test_frame = StepRecoTab(self)
         self.show_frame("Client Information")
 
     def show_frame(self, value):
