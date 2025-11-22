@@ -1,17 +1,18 @@
 import customtkinter as ctk
-import threading
-import time
 
 class TimerFrame(ctk.CTkFrame):
-    def __init__(self, master, time_intervals=None, **kwargs):
+    def __init__(self, master, time_intervals, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
 
-        # Use provided intervals or default
-        self.time_intervals = time_intervals
+        # Convert intervals (minutes) to integers
+        self.time_intervals = [int(t) for t in time_intervals]
+        self.total_steps = len(self.time_intervals)
+
+        # State
         self.current_index = 0
-        self.remaining_minutes = self.time_intervals[self.current_index]
+        self.remaining_seconds = self.time_intervals[self.current_index] * 60
         self.running = False
-        self.thread = None
+        self.after_id = None
 
         # Outer frame with fixed size
         self.timer_frame = ctk.CTkFrame(self, width=200, height=120)
@@ -19,20 +20,23 @@ class TimerFrame(ctk.CTkFrame):
         self.timer_frame.grid_propagate(False)   # keep fixed size
 
         # Label at top
-        self.label = ctk.CTkLabel(self.timer_frame, text=f"{self.remaining_minutes} min",
-                                  font=("Times New Roman", 24))
+        self.label = ctk.CTkLabel(
+            self.timer_frame,
+            text=self._format_time(),
+            font=("Times New Roman", 24)
+        )
         self.label.grid(row=0, column=0, columnspan=2, pady=(10, 5), sticky="ew")
 
         # Buttons row (Start + Pause side by side)
-        self.start_button = ctk.CTkButton(self.timer_frame, text="Start", command=self.start_timer)
-        self.start_button.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+        self.play_button = ctk.CTkButton(self.timer_frame, text="Start", command=self.start_countdown)
+        self.play_button.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
 
-        self.pause_button = ctk.CTkButton(self.timer_frame, text="Pause", command=self.pause_timer)
+        self.pause_button = ctk.CTkButton(self.timer_frame, text="Pause", command=self.pause_countdown)
         self.pause_button.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
         # Restart button below
-        self.restart_button = ctk.CTkButton(self.timer_frame, text="Restart", command=self.restart_timer)
-        self.restart_button.grid(row=2, column=0, columnspan=2, padx=5, pady=(5,10), sticky="ew")
+        self.reset_button = ctk.CTkButton(self.timer_frame, text="Restart", command=self.reset_countdown)
+        self.reset_button.grid(row=2, column=0, columnspan=2, padx=5, pady=(5,10), sticky="ew")
 
         # Configure grid inside timer_frame
         self.timer_frame.grid_rowconfigure(0, weight=0)
@@ -41,37 +45,68 @@ class TimerFrame(ctk.CTkFrame):
         self.timer_frame.grid_columnconfigure(0, weight=1)
         self.timer_frame.grid_columnconfigure(1, weight=1)
 
-    def update_label(self):
-        self.label.configure(text=f"{self.remaining_minutes} min (Step {self.current_index+1}/{len(self.time_intervals)})")
+        # Optional callback for external highlight
+        self.on_time_change = None
 
-    def countdown(self):
-        while self.running and self.current_index < len(self.time_intervals):
-            while self.running and self.remaining_minutes > 0:
-                time.sleep(60)  # wait 1 minute
-                if self.running:
-                    self.remaining_minutes -= 1
-                    self.update_label()
+    # ----- Helpers -----
+    def _format_time(self):
+        mins = self.remaining_seconds // 60
+        secs = self.remaining_seconds % 60
+        return f"{mins}:{secs:02d}"
 
+    def _update_label(self):
+        self.label.configure(text=self._format_time())
+
+    # ----- Countdown logic -----
+    def _tick(self):
+        if not self.running:
+            return
+
+        if self.remaining_seconds > 0:
+            self.remaining_seconds -= 1
+            self._update_label()
+
+            # Fire callback when a full minute boundary is hit
+            if self.remaining_seconds % 60 == 0 and self.on_time_change:
+                minutes = self.remaining_seconds // 60
+                if minutes in self.time_intervals:
+                    self.on_time_change(str(minutes))
+
+            self.after_id = self.after(1000, self._tick)
+        else:
             # Move to next interval
-            if self.running:
-                self.current_index += 1
-                if self.current_index < len(self.time_intervals):
-                    self.remaining_minutes = self.time_intervals[self.current_index]
-                    self.update_label()
-                else:
-                    self.running = False  # finished all intervals
+            self.current_index += 1
+            if self.current_index < self.total_steps:
+                self.remaining_seconds = self.time_intervals[self.current_index] * 60
+                self._update_label()
+                self.after_id = self.after(1000, self._tick)
+            else:
+                # Finished all intervals
+                self.running = False
+                self.after_id = None
 
-    def start_timer(self):
+    # ----- Controls -----
+    def start_countdown(self):
         if not self.running:
             self.running = True
-            self.thread = threading.Thread(target=self.countdown, daemon=True)
-            self.thread.start()
+            self._tick()
 
-    def pause_timer(self):
+    def pause_countdown(self):
         self.running = False
+        if self.after_id:
+            self.after_cancel(self.after_id)
+            self.after_id = None
 
-    def restart_timer(self):
-        self.running = False
-        self.current_index = 0
-        self.remaining_minutes = self.time_intervals[self.current_index]
-        self.update_label()
+    def reset_countdown(self):
+        self.pause_countdown()
+        self.remaining_seconds = self.time_intervals[self.current_index] * 60
+        self._update_label()
+
+    def set_time_index(self, index):
+        """Switch to a different interval in the sequence."""
+        if 0 <= index < len(self.time_intervals):
+            self.current_index = index
+            self.remaining_seconds = self.time_intervals[index] * 60
+            self._update_label()
+            if self.on_time_change:
+                self.on_time_change(str(self.time_intervals[index]))
