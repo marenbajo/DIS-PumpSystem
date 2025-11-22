@@ -10,7 +10,7 @@ class StepFrame(ctk.CTkFrame):
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=0)
         self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=0)
+        self.columnconfigure(1, weight=0, minsize=250)
 
         self.time_interval = [1,3,5,7,10,15,20,25,30,35,40,50,60]
         fields = ["Time (min)", "Waterlevel (m)", "Meter reading",
@@ -33,7 +33,7 @@ class StepFrame(ctk.CTkFrame):
             for f in range(1, len(fields)-1):
                 stepInput = ctk.CTkEntry(
                     StepTestFrame,
-                    placeholder_text=f"{interval} {fields[f]}"
+                    placeholder_text=f"{interval} - {fields[f]}"
                 )
                 stepInput.grid(row=i+1, column=f, sticky="nsew", padx=5, pady=5)
 

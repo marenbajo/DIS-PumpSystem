@@ -2,9 +2,9 @@ import customtkinter as ctk
 from components.notes_frame import NotesFrame
 
 class InfoFrame(ctk.CTkFrame):
-    def __init__(self, master, test_number, **kwargs):
+    def __init__(self, master, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
-        self.test_number = test_number
+
         self.entries = {}
 
         for r in range(5):
@@ -48,8 +48,7 @@ class InfoFrame(ctk.CTkFrame):
         self.save_button = ctk.CTkButton(
             self,
             text="Save All",
-            font=("Times New Roman", 18),
-            command=lambda: self.save_data(self.test_number)
+            font=("Times New Roman", 18)
         )
         self.save_button.grid(row=6, column=0, columnspan=6, pady=(10, 10), padx=10, sticky="e")
 
