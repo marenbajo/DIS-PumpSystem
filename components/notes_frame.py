@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from app.config import TEXT_STYLE
 
 class NotesFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -11,7 +12,7 @@ class NotesFrame(ctk.CTkFrame):
         self.note_label = ctk.CTkLabel(
             self,
             text="Extra Notes: ",
-            text_color="black",
+            **TEXT_STYLE,
         )
         self.note_label.grid(row=0, column=0, sticky="w")
 

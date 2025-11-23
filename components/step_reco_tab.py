@@ -1,10 +1,13 @@
 import customtkinter as ctk
+from app.config import TEXT_STYLE
 from components.step_frame import StepFrame
 from components.reco_frame import RecoFrame
 
 class StepRecoTab(ctk.CTkTabview):
     def __init__(self, master, **kwargs):
-        super().__init__(master, **kwargs)
+        super().__init__(master, fg_color="transparent", **kwargs)
+
+        self._segmented_button.configure(**TEXT_STYLE)
 
         self.step_count = 1
         self.reco_count = 0

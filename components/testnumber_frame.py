@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import random
+from app.config import TEST_NUM_STYLE
 
 class TestnumberFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -14,7 +15,6 @@ class TestnumberFrame(ctk.CTkFrame):
         self.logo_label = ctk.CTkLabel(
             self,
             text=(f"Test Number: {test_num}"),
-            font=("Times New Roman", 20, "bold"),
-            text_color="#000099",
+            **TEST_NUM_STYLE
         )
         self.logo_label.grid(row=0, column=0, sticky="nsew")

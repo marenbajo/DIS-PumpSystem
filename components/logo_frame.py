@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from app.config import LOGO_STYLE
 from components.testnumber_frame import TestnumberFrame
 
 class LogoFrame(ctk.CTkFrame):
@@ -12,8 +13,7 @@ class LogoFrame(ctk.CTkFrame):
         self.logo_label = ctk.CTkLabel(
             self,
             text="DIS Pump Test",
-            font=("Times New Roman", 30, "bold"),
-            text_color="#000099",
+            **LOGO_STYLE
         )
         self.logo_label.grid(row=0, column=0, sticky="nsew")
 

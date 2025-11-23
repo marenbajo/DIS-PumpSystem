@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from app.config import LABEL_STYLE, TEXT_STYLE
 from components.timer_frame import TimerFrame
 from components.buttons_frame import ButtonFrame
 
@@ -21,32 +22,34 @@ class RecoFrame(ctk.CTkFrame):
 
         for i, field in enumerate(fields):
             RecoTestFrame.grid_columnconfigure(i, weight=1)
-            headingLabel = ctk.CTkLabel(RecoTestFrame, text=field)
+            headingLabel = ctk.CTkLabel(RecoTestFrame, text=field, **LABEL_STYLE)
             headingLabel.grid(row=0, column=i, sticky="nsew")
 
         # Left side
         for i, interval in enumerate(self.time_interval_l):
             RecoTestFrame.grid_rowconfigure(i+1, weight=1)
-            timeLabel_l = ctk.CTkLabel(RecoTestFrame, text=interval)
+            timeLabel_l = ctk.CTkLabel(RecoTestFrame, text=interval, **TEXT_STYLE)
             timeLabel_l.grid(row=i+1, column=0, sticky="nsew")
 
             for f in range(1, len(fields)-1):
                 stepInput_l = ctk.CTkEntry(
                     RecoTestFrame,
-                    placeholder_text=f"{interval} - {fields[f]}"
+                    placeholder_text=f"{interval} - {fields[f]}",
+                    **TEXT_STYLE
                 )
                 stepInput_l.grid(row=i+1, column=f, sticky="nsew", padx=5, pady=5)
 
         # Right side
         for i, interval in enumerate(self.time_interval_r):
             RecoTestFrame.grid_rowconfigure(i + 1, weight=1)
-            timeLabel_r = ctk.CTkLabel(RecoTestFrame, text=interval)
+            timeLabel_r = ctk.CTkLabel(RecoTestFrame, text=interval, **TEXT_STYLE)
             timeLabel_r.grid(row=i + 1, column=3, sticky="nsew")
 
             for f in range(4, 6):
                 stepInput_r = ctk.CTkEntry(
                     RecoTestFrame,
-                    placeholder_text=f"{interval} - {fields[f]}"
+                    placeholder_text=f"{interval} - {fields[f]}",
+                    **TEXT_STYLE
                 )
                 stepInput_r.grid(row=i + 1, column=f, sticky="nsew", padx=5, pady=5)
 

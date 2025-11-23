@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from app.config import TIMER_BUTTON_STYLE   # centralized style
 
 class TimerFrame(ctk.CTkFrame):
     def __init__(self, master, time_intervals, **kwargs):
@@ -14,28 +15,51 @@ class TimerFrame(ctk.CTkFrame):
         self.running = False
         self.after_id = None
 
-        # Outer frame with fixed size
-        self.timer_frame = ctk.CTkFrame(self, width=200, height=120)
+        # Outer frame
+        self.timer_frame = ctk.CTkFrame(self, width=200)
         self.timer_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        self.timer_frame.grid_propagate(False)   # keep fixed size
 
-        # Label at top
-        self.label = ctk.CTkLabel(
+        # --- Timer display frame (around the label) ---
+        self.display_frame = ctk.CTkFrame(
             self.timer_frame,
+            fg_color="#ffffff",        # background color of timer area
+            border_color="#3434ef",    # border color
+            border_width=2             # thickness of border
+        )
+        self.display_frame.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
+
+        # Label inside display_frame
+        self.label = ctk.CTkLabel(
+            self.display_frame,
             text=self._format_time(),
             font=("Times New Roman", 24)
         )
-        self.label.grid(row=0, column=0, columnspan=2, pady=(10, 5), sticky="ew")
+        self.label.pack(padx=10, pady=10, fill="x")
 
         # Buttons row (Start + Pause side by side)
-        self.play_button = ctk.CTkButton(self.timer_frame, text="Start", command=self.start_countdown)
+        self.play_button = ctk.CTkButton(
+            self.timer_frame,
+            text="Start",
+            command=self.start_countdown,
+            **TIMER_BUTTON_STYLE
+        )
         self.play_button.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
 
-        self.pause_button = ctk.CTkButton(self.timer_frame, text="Pause", command=self.pause_countdown)
+        self.pause_button = ctk.CTkButton(
+            self.timer_frame,
+            text="Pause",
+            command=self.pause_countdown,
+            **TIMER_BUTTON_STYLE
+        )
         self.pause_button.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
         # Restart button below
-        self.reset_button = ctk.CTkButton(self.timer_frame, text="Restart", command=self.reset_countdown)
+        self.reset_button = ctk.CTkButton(
+            self.timer_frame,
+            text="Restart",
+            command=self.reset_countdown,
+            **TIMER_BUTTON_STYLE
+        )
         self.reset_button.grid(row=2, column=0, columnspan=2, padx=5, pady=(5,10), sticky="ew")
 
         # Configure grid inside timer_frame
@@ -66,7 +90,6 @@ class TimerFrame(ctk.CTkFrame):
             self.remaining_seconds -= 1
             self._update_label()
 
-            # Fire callback when a full minute boundary is hit
             if self.remaining_seconds % 60 == 0 and self.on_time_change:
                 minutes = self.remaining_seconds // 60
                 if minutes in self.time_intervals:
@@ -74,14 +97,12 @@ class TimerFrame(ctk.CTkFrame):
 
             self.after_id = self.after(1000, self._tick)
         else:
-            # Move to next interval
             self.current_index += 1
             if self.current_index < self.total_steps:
                 self.remaining_seconds = self.time_intervals[self.current_index] * 60
                 self._update_label()
                 self.after_id = self.after(1000, self._tick)
             else:
-                # Finished all intervals
                 self.running = False
                 self.after_id = None
 
@@ -103,7 +124,6 @@ class TimerFrame(ctk.CTkFrame):
         self._update_label()
 
     def set_time_index(self, index):
-        """Switch to a different interval in the sequence."""
         if 0 <= index < len(self.time_intervals):
             self.current_index = index
             self.remaining_seconds = self.time_intervals[index] * 60

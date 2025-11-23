@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from app.config import LABEL_STYLE, TEXT_STYLE
 from components.timer_frame import TimerFrame
 from components.buttons_frame import ButtonFrame
 
@@ -22,18 +23,19 @@ class StepFrame(ctk.CTkFrame):
 
         for i, field in enumerate(fields):
             StepTestFrame.grid_columnconfigure(i, weight=1)
-            headingLabel = ctk.CTkLabel(StepTestFrame, text=field)
+            headingLabel = ctk.CTkLabel(StepTestFrame, text=field, **LABEL_STYLE)
             headingLabel.grid(row=0, column=i, sticky="nsew")
 
         for i, interval in enumerate(self.time_interval):
             StepTestFrame.grid_rowconfigure(i+1, weight=1)
-            timeLabel = ctk.CTkLabel(StepTestFrame, text=interval)
+            timeLabel = ctk.CTkLabel(StepTestFrame, text=interval, **TEXT_STYLE)
             timeLabel.grid(row=i+1, column=0, sticky="nsew")
 
             for f in range(1, len(fields)-1):
                 stepInput = ctk.CTkEntry(
                     StepTestFrame,
-                    placeholder_text=f"{interval} - {fields[f]}"
+                    placeholder_text=f"{interval} - {fields[f]}",
+                    **TEXT_STYLE
                 )
                 stepInput.grid(row=i+1, column=f, sticky="nsew", padx=5, pady=5)
 
@@ -42,11 +44,11 @@ class StepFrame(ctk.CTkFrame):
 
         # Timer
         self.timer = TimerFrame(self, time_intervals=self.time_interval, width=230)
-        self.timer.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+        self.timer.grid(row=0, column=1, padx=10, pady=10, sticky="new")
         self.timer.grid_propagate(False)
 
         # Buttons (only if a tabview is provided)
         if tabview is not None:
             self.buttons = ButtonFrame(self, tabview, width=230)
-            self.buttons.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
+            self.buttons.grid(row=1, column=1, padx=10, pady=10, sticky="sew")
             self.buttons.grid_propagate(False)

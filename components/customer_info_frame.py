@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from components.notes_frame import NotesFrame
+from app.config import TEXT_STYLE
 
 class InfoFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -56,8 +57,7 @@ class InfoFrame(ctk.CTkFrame):
         label = ctk.CTkLabel(
             self,
             text=text,
-            font=("Times New Roman", 18),
-            text_color="black",
+            **TEXT_STYLE,
             anchor="e"
         )
         label.grid(row=row, column=col, padx=(10, 5), pady=5, sticky="w")
@@ -65,9 +65,7 @@ class InfoFrame(ctk.CTkFrame):
         entry = ctk.CTkEntry(
             self,
             placeholder_text=f"Enter {text.replace(':', '').replace('\n', ' ')}",
-            font=("Times New Roman", 18),
-            text_color="black",
+            **TEXT_STYLE
         )
         entry.grid(row=row, column=col + 1, padx=(5, 10), pady=5, sticky="w")
-
         self.entries[text.strip()] = entry
