@@ -7,7 +7,6 @@ class StepFrame(ctk.CTkFrame):
     def __init__(self, master, tabview=None, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
 
-        # Grid setup
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=0)
         self.columnconfigure(0, weight=1)
@@ -17,38 +16,71 @@ class StepFrame(ctk.CTkFrame):
         fields = ["Time (min)", "Waterlevel (m)", "Meter reading",
                   "calculated Meter reading", "Q(m^3/h)"]
 
-        # Table
-        StepTestFrame = ctk.CTkFrame(self)
-        StepTestFrame.grid(row=0, column=0, rowspan=2, sticky="nsew")
+        self.StepTestFrame = ctk.CTkFrame(self)
+        self.StepTestFrame.grid(row=0, column=0, rowspan=2, sticky="nsew")
 
         for i, field in enumerate(fields):
-            StepTestFrame.grid_columnconfigure(i, weight=1)
-            headingLabel = ctk.CTkLabel(StepTestFrame, text=field, **LABEL_STYLE)
-            headingLabel.grid(row=0, column=i, sticky="nsew")
+            self.StepTestFrame.grid_columnconfigure(i, weight=1, uniform="col")
+            headingLabel = ctk.CTkLabel(
+                self.StepTestFrame,
+                text=field,
+                anchor="center",
+                **LABEL_STYLE
+            )
+            headingLabel.grid(row=0, column=i, sticky="nsew", padx=5, pady=(1,1))
 
-        for i, interval in enumerate(self.time_interval):
-            StepTestFrame.grid_rowconfigure(i+1, weight=1)
-            timeLabel = ctk.CTkLabel(StepTestFrame, text=interval, **TEXT_STYLE)
-            timeLabel.grid(row=i+1, column=0, sticky="nsew")
+        self.row_frames = {}
+
+        for r, interval in enumerate(self.time_interval, start=1):
+            self.StepTestFrame.grid_rowconfigure(r, weight=1)
+
+            row_frame = ctk.CTkFrame(self.StepTestFrame, fg_color="transparent", corner_radius=6)
+            row_frame.grid(row=r, column=0, columnspan=len(fields)-1, sticky="nsew", padx=2)
+
+            row_frame.grid_rowconfigure(0, weight=1)  # allow vertical stretch
+            for f in range(len(fields)-1):
+                row_frame.grid_columnconfigure(f, weight=1, uniform="row")
+
+            timeLabel = ctk.CTkLabel(
+                row_frame,
+                text=str(interval),
+                anchor="center",
+                **TEXT_STYLE
+            )
+            timeLabel.grid(row=0, column=0, sticky="nsew", padx=5, pady=(1,1))
 
             for f in range(1, len(fields)-1):
                 stepInput = ctk.CTkEntry(
-                    StepTestFrame,
+                    row_frame,
                     placeholder_text=f"{interval} - {fields[f]}",
+                    justify="center",
+                    height=30,  # taller entry field
                     **TEXT_STYLE
                 )
-                stepInput.grid(row=i+1, column=f, sticky="nsew", padx=5, pady=5)
+                stepInput.grid(row=0, column=f, sticky="nsew", padx=5, pady=(1,1))
 
-        QstepInput = ctk.CTkEntry(StepTestFrame, placeholder_text="Q (m^3/h)")
-        QstepInput.grid(row=1, column=4, padx=5, pady=5, sticky="nsew")
+            self.row_frames[str(interval)] = row_frame
 
-        # Timer
+            if r == 1:
+                QstepInput = ctk.CTkEntry(
+                    self.StepTestFrame,
+                    placeholder_text="Q (m^3/h)",
+                    justify="center",
+                    height=30,
+                    **TEXT_STYLE
+                )
+                QstepInput.grid(row=r, column=len(fields)-1, padx=5, pady=(1,1), sticky="nsew")
+
         self.timer = TimerFrame(self, time_intervals=self.time_interval, width=230)
         self.timer.grid(row=0, column=1, padx=10, pady=10, sticky="new")
         self.timer.grid_propagate(False)
+        self.timer.on_time_change = self.highlight_row
 
-        # Buttons (only if a tabview is provided)
         if tabview is not None:
             self.buttons = ButtonFrame(self, tabview, width=230)
             self.buttons.grid(row=1, column=1, padx=10, pady=10, sticky="sew")
             self.buttons.grid_propagate(False)
+
+    def highlight_row(self, active_time: str):
+        for time, frame in self.row_frames.items():
+            frame.configure(fg_color="#8080CC" if time == active_time else "transparent")

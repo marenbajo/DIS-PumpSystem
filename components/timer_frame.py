@@ -69,8 +69,11 @@ class TimerFrame(ctk.CTkFrame):
         self.timer_frame.grid_columnconfigure(0, weight=1)
         self.timer_frame.grid_columnconfigure(1, weight=1)
 
-        # Optional callback for external highlight
+        # Callback for external highlight (StepFrame will hook into this)
         self.on_time_change = None
+
+        # Emit initial interval so the first row highlights immediately
+        self._emit_interval_start()
 
     # ----- Helpers -----
     def _format_time(self):
@@ -81,6 +84,11 @@ class TimerFrame(ctk.CTkFrame):
     def _update_label(self):
         self.label.configure(text=self._format_time())
 
+    def _emit_interval_start(self):
+        """Notify external code which interval just started."""
+        if self.on_time_change:
+            self.on_time_change(str(self.time_intervals[self.current_index]))
+
     # ----- Countdown logic -----
     def _tick(self):
         if not self.running:
@@ -90,6 +98,7 @@ class TimerFrame(ctk.CTkFrame):
             self.remaining_seconds -= 1
             self._update_label()
 
+            # Optional: still fire at minute boundaries if needed
             if self.remaining_seconds % 60 == 0 and self.on_time_change:
                 minutes = self.remaining_seconds // 60
                 if minutes in self.time_intervals:
@@ -97,10 +106,12 @@ class TimerFrame(ctk.CTkFrame):
 
             self.after_id = self.after(1000, self._tick)
         else:
+            # Move to next interval
             self.current_index += 1
             if self.current_index < self.total_steps:
                 self.remaining_seconds = self.time_intervals[self.current_index] * 60
                 self._update_label()
+                self._emit_interval_start()   # highlight new row
                 self.after_id = self.after(1000, self._tick)
             else:
                 self.running = False
@@ -110,6 +121,7 @@ class TimerFrame(ctk.CTkFrame):
     def start_countdown(self):
         if not self.running:
             self.running = True
+            self._emit_interval_start()  # highlight current row at start
             self._tick()
 
     def pause_countdown(self):
@@ -122,11 +134,11 @@ class TimerFrame(ctk.CTkFrame):
         self.pause_countdown()
         self.remaining_seconds = self.time_intervals[self.current_index] * 60
         self._update_label()
+        self._emit_interval_start()
 
     def set_time_index(self, index):
         if 0 <= index < len(self.time_intervals):
             self.current_index = index
             self.remaining_seconds = self.time_intervals[index] * 60
             self._update_label()
-            if self.on_time_change:
-                self.on_time_change(str(self.time_intervals[index]))
+            self._emit_interval_start()
