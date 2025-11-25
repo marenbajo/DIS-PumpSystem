@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from app.config import TIMER_BUTTON_STYLE   # centralized style
+from app.config import TIMER_BUTTON_STYLE, TIMER_STYLE
 
 class TimerFrame(ctk.CTkFrame):
     def __init__(self, master, time_intervals, **kwargs):
@@ -22,9 +22,7 @@ class TimerFrame(ctk.CTkFrame):
         # --- Timer display frame (around the label) ---
         self.display_frame = ctk.CTkFrame(
             self.timer_frame,
-            fg_color="#ffffff",        # background color of timer area
-            border_color="#3434ef",    # border color
-            border_width=2             # thickness of border
+            **TIMER_STYLE
         )
         self.display_frame.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
 

@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from app.config import LABEL_STYLE, TEXT_STYLE
+from app.config import LABEL_STYLE, TEXT_STYLE, HIGHLIGHT_STYLE
 from components.timer_frame import TimerFrame
 from components.buttons_frame import ButtonFrame
 
@@ -50,7 +50,7 @@ class RecoFrame(ctk.CTkFrame):
                     height=30,
                     **TEXT_STYLE
                 )
-                entry.grid(row=0, column=f, sticky="nsew", padx=5, pady=1)
+                entry.grid(row=0, column=f, sticky="nsew", padx=5, pady=(5,5))
 
             self.row_frames[str(interval)] = row_frame
 
@@ -77,7 +77,7 @@ class RecoFrame(ctk.CTkFrame):
                     height=30,
                     **TEXT_STYLE
                 )
-                entry.grid(row=0, column=f-3, sticky="nsew", padx=5, pady=1)
+                entry.grid(row=0, column=f-3, sticky="nsew", padx=5, pady=(5,5))
 
             self.row_frames[str(interval)] = row_frame
 
@@ -91,9 +91,11 @@ class RecoFrame(ctk.CTkFrame):
         # Buttons
         if tabview is not None:
             self.buttons = ButtonFrame(self, tabview, width=230)
-            self.buttons.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
-            self.buttons.grid_propagate(False)
+            self.buttons.grid(row=1, column=1, padx=10, pady=10, sticky="sew")
 
     def highlight_row(self, active_time: str):
         for time, frame in self.row_frames.items():
-            frame.configure(fg_color="#8080CC" if time == active_time else "transparent")
+            if time == active_time:
+                frame.configure(**HIGHLIGHT_STYLE)
+            else:
+                frame.configure(fg_color="transparent")

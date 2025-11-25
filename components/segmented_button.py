@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from app.config import TEXT_STYLE
+from app.config import TEXT_STYLE, SEGMENTED_STYLE
 from components.customer_info_frame import InfoFrame
 from components.step_reco_tab import StepRecoTab
 
@@ -14,9 +14,7 @@ class SegmentedButton(ctk.CTkFrame):
         self.segmented_button = ctk.CTkSegmentedButton(
             self,
             values=["Client Information", "Test"],
-            selected_color="#bababa",
-            unselected_color="#e2e2e2",
-            selected_hover_color="#808080",
+            **SEGMENTED_STYLE,
             **TEXT_STYLE,
             command=self.show_frame
         )

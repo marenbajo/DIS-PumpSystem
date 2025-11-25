@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from app.config import LABEL_STYLE, TEXT_STYLE
+from app.config import LABEL_STYLE, TEXT_STYLE, HIGHLIGHT_STYLE
 from components.timer_frame import TimerFrame
 from components.buttons_frame import ButtonFrame
 
@@ -54,10 +54,10 @@ class StepFrame(ctk.CTkFrame):
                     row_frame,
                     placeholder_text=f"{interval} - {fields[f]}",
                     justify="center",
-                    height=30,  # taller entry field
+                    height=28,  # taller entry field
                     **TEXT_STYLE
                 )
-                stepInput.grid(row=0, column=f, sticky="nsew", padx=5, pady=(1,1))
+                stepInput.grid(row=0, column=f, sticky="nsew", padx=5, pady=(5,5))
 
             self.row_frames[str(interval)] = row_frame
 
@@ -71,16 +71,18 @@ class StepFrame(ctk.CTkFrame):
                 )
                 QstepInput.grid(row=r, column=len(fields)-1, padx=5, pady=(1,1), sticky="nsew")
 
-        self.timer = TimerFrame(self, time_intervals=self.time_interval, width=230)
+        self.timer = TimerFrame(self, time_intervals=self.time_interval, width=200)
         self.timer.grid(row=0, column=1, padx=10, pady=10, sticky="new")
         self.timer.grid_propagate(False)
         self.timer.on_time_change = self.highlight_row
 
         if tabview is not None:
-            self.buttons = ButtonFrame(self, tabview, width=230)
+            self.buttons = ButtonFrame(self, tabview, width=200)
             self.buttons.grid(row=1, column=1, padx=10, pady=10, sticky="sew")
-            self.buttons.grid_propagate(False)
 
     def highlight_row(self, active_time: str):
         for time, frame in self.row_frames.items():
-            frame.configure(fg_color="#8080CC" if time == active_time else "transparent")
+            if time == active_time:
+                frame.configure(**HIGHLIGHT_STYLE)
+            else:
+                frame.configure(fg_color="transparent")
