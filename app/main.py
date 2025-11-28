@@ -21,6 +21,9 @@ class App(ctk.CTk):
         self.segmented_button = SegmentedButton(self)
         self.segmented_button.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="nsew")
 
+        self.status_label = ctk.CTkLabel(self, text="", font=("Times New Roman", 12))
+        self.status_label.grid(row=2, column=0, pady=(5, 5), sticky="w")
+
 if __name__ == "__main__":
     app = App()
     app.mainloop()

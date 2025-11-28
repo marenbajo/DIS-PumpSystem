@@ -30,6 +30,9 @@ class StepRecoTab(ctk.CTkTabview):
         step_frame = StepFrame(tab_content, tabview=self)
         step_frame.grid(row=0, column=0, sticky="nsew")
 
+        # Keep a reference to frames by tab name
+        self.frames = {"Step 1": step_frame}
+
     def _next_step_number(self):
         existing_steps = [
             int(name.split()[1])
@@ -51,8 +54,10 @@ class StepRecoTab(ctk.CTkTabview):
         tab_content.grid_rowconfigure(0, weight=1)
         tab_content.grid_columnconfigure(0, weight=1)
 
-        step_frame = StepFrame(tab_content, tabview=self)
+        step_frame = StepFrame(tab_content, tabview=self, step_name=tab_name)
         step_frame.grid(row=0, column=0, sticky="nsew")
+
+        self.frames[tab_name] = step_frame
 
     def add_reco_tab(self):
         self.reco_count += 1
@@ -64,8 +69,10 @@ class StepRecoTab(ctk.CTkTabview):
         tab_content.grid_rowconfigure(0, weight=1)
         tab_content.grid_columnconfigure(0, weight=1)
 
-        reco_frame = RecoFrame(tab_content, tabview=self)
+        reco_frame = RecoFrame(tab_content, tabview=self, reco_name=tab_name)
         reco_frame.grid(row=0, column=0, sticky="nsew")
+
+        self.frames[tab_name] = reco_frame
 
     def close_current_tab(self):
         current_tab = self.get()
@@ -80,3 +87,16 @@ class StepRecoTab(ctk.CTkTabview):
         answer = messagebox.askyesno("Confirm Close", f"Are you sure you want to close '{current_tab}'?")
         if answer:
             self.delete(current_tab)
+            if current_tab in self.frames:
+                del self.frames[current_tab]
+
+    def save_current_tab(self):
+        current_tab = self.get()
+        if not current_tab:
+            return
+
+        frame = self.frames.get(current_tab)
+        if frame and hasattr(frame, "save_data"):
+            frame.save_data()
+        else:
+            messagebox.showinfo("Save", f"No saveable frame found in '{current_tab}'")
