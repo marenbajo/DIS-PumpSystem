@@ -1,5 +1,7 @@
 import customtkinter as ctk
 from tkinter import messagebox
+import os
+import csv
 from app.config import TEXT_STYLE, SEGMENTED_STYLE
 from components.step_frame import StepFrame
 from components.reco_frame import RecoFrame
@@ -27,7 +29,7 @@ class StepRecoTab(ctk.CTkTabview):
         tab_content.grid_rowconfigure(0, weight=1)
         tab_content.grid_columnconfigure(0, weight=1)
 
-        step_frame = StepFrame(tab_content, tabview=self)
+        step_frame = StepFrame(tab_content, tabview=self, step_name="Step 1")
         step_frame.grid(row=0, column=0, sticky="nsew")
 
         # Keep a reference to frames by tab name
@@ -85,10 +87,52 @@ class StepRecoTab(ctk.CTkTabview):
             return
 
         answer = messagebox.askyesno("Confirm Close", f"Are you sure you want to close '{current_tab}'?")
-        if answer:
-            self.delete(current_tab)
-            if current_tab in self.frames:
-                del self.frames[current_tab]
+        if not answer:
+            return
+
+        frame = self.frames.get(current_tab)
+        if frame:
+            if current_tab.startswith("Step"):
+                self._delete_block_from_csv(
+                    os.path.join(frame.folder_path, f"Steps_{frame.test_number}_{frame.date_value}.csv"),
+                    current_tab
+                )
+            elif current_tab.startswith("Recovery"):
+                self._delete_block_from_csv(
+                    os.path.join(frame.folder_path, f"Recovery_{frame.test_number}_{frame.date_value}.csv"),
+                    current_tab
+                )
+
+        # Delete tab and frame reference
+        self.delete(current_tab)
+        if current_tab in self.frames:
+            del self.frames[current_tab]
+
+    def _delete_block_from_csv(self, filename, section_name):
+        if not os.path.exists(filename):
+            return
+
+        with open(filename, "r", encoding="utf-8") as f:
+            rows = list(csv.reader(f))
+
+        header = rows[0] if rows else []
+        filtered = [header]
+        skip_block = False
+        for row in rows[1:]:
+            if row and row[0] == section_name:  # start of block
+                skip_block = True
+                continue
+            if skip_block:
+                if row and row[0] != "":  # next block starts
+                    skip_block = False
+                    filtered.append(row)
+                # else: skip blank rows belonging to this block
+            else:
+                filtered.append(row)
+
+        with open(filename, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerows(filtered)
 
     def save_current_tab(self):
         current_tab = self.get()

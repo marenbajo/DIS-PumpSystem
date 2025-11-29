@@ -4,17 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ba5bda29-81a1-459f-a0c7-64b96d7164a0" name="Changes" comment="config finalisation stat to integrate the save logis">
-      <change afterPath="$PROJECT_DIR$/data/save_file.py" afterDir="false" />
+    <list default="true" id="ba5bda29-81a1-459f-a0c7-64b96d7164a0" name="Changes" comment="save logic changed and started to implement">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/layout.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/buttons_frame.py" beforeDir="false" afterPath="$PROJECT_DIR$/components/buttons_frame.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/customer_info_frame.py" beforeDir="false" afterPath="$PROJECT_DIR$/components/customer_info_frame.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/reco_frame.py" beforeDir="false" afterPath="$PROJECT_DIR$/components/reco_frame.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/step_frame.py" beforeDir="false" afterPath="$PROJECT_DIR$/components/step_frame.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/step_reco_tab.py" beforeDir="false" afterPath="$PROJECT_DIR$/components/step_reco_tab.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/testnumber_frame.py" beforeDir="false" afterPath="$PROJECT_DIR$/components/testnumber_frame.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/save_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/save_file.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,16 +24,16 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "history": [
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;history&quot;: [
     {
-      "assignee": "marenbajo"
+      &quot;assignee&quot;: &quot;marenbajo&quot;
     }
   ],
-  "lastFilter": {
-    "assignee": "marenbajo"
+  &quot;lastFilter&quot;: {
+    &quot;assignee&quot;: &quot;marenbajo&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/marenbajo/DIS-PumpSystem.git&quot;,
@@ -145,7 +138,9 @@
       <workItem from="1764073417807" duration="529000" />
       <workItem from="1764170891511" duration="3619000" />
       <workItem from="1764320467685" duration="781000" />
-      <workItem from="1764321866997" duration="4041000" />
+      <workItem from="1764321866997" duration="4248000" />
+      <workItem from="1764330024142" duration="547000" />
+      <workItem from="1764407462829" duration="2470000" />
     </task>
     <task id="LOCAL-00001" summary="initial setup">
       <option name="closed" value="true" />
@@ -235,7 +230,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764069093216</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="save logic changed and started to implement">
+      <option name="closed" value="true" />
+      <created>1764326519972</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1764326519973</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -264,7 +267,8 @@
     <MESSAGE value="config integration" />
     <MESSAGE value="row highlight" />
     <MESSAGE value="config finalisation stat to integrate the save logis" />
-    <option name="LAST_COMMIT_MESSAGE" value="config finalisation stat to integrate the save logis" />
+    <MESSAGE value="save logic changed and started to implement" />
+    <option name="LAST_COMMIT_MESSAGE" value="save logic changed and started to implement" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/DIS_PumpSystem$config.coverage" NAME="config Coverage Results" MODIFIED="1763408029970" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
@@ -272,6 +276,6 @@
     <SUITE FILE_PATH="coverage/DIS_PumpSystem$testnumber_frame.coverage" NAME="testnumber_frame Coverage Results" MODIFIED="1763412712695" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/components" />
     <SUITE FILE_PATH="coverage/DIS_PumpSystem$layout.coverage" NAME="layout Coverage Results" MODIFIED="1763412885095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
     <SUITE FILE_PATH="coverage/DIS_PumpSystem$segmented_button.coverage" NAME="segmented_button Coverage Results" MODIFIED="1763414612161" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/components" />
-    <SUITE FILE_PATH="coverage/DIS_PumpSystem$main.coverage" NAME="main Coverage Results" MODIFIED="1764326344381" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
+    <SUITE FILE_PATH="coverage/DIS_PumpSystem$main.coverage" NAME="main Coverage Results" MODIFIED="1764413736415" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
   </component>
 </project>
