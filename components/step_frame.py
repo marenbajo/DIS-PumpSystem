@@ -12,7 +12,7 @@ class StepFrame(ctk.CTkFrame):
         self.step_name = step_name
         self.folder_path, self.test_number, self.date_value = start_new_session()
 
-        # Shared status label (passed in from App) or local fallback
+        # Shared status label
         self.status_label = status_label
         self.autosave_interval = autosave_interval
         if not self.status_label:
@@ -27,7 +27,7 @@ class StepFrame(ctk.CTkFrame):
 
         self.time_interval = [1,3,5,7,10,15,20,25,30,35,40,50,60]
         fields = ["Time (min)", "Waterlevel (m)", "Meter reading",
-                  "calculated Meter reading", "Q(m^3/h)"]
+                  "Calculated Meter reading", "Q(m^3/h)"]
 
         self.StepTestFrame = ctk.CTkFrame(self)
         self.StepTestFrame.grid(row=0, column=0, rowspan=2, sticky="nsew")
@@ -42,6 +42,7 @@ class StepFrame(ctk.CTkFrame):
             )
             headingLabel.grid(row=0, column=i, sticky="nsew", padx=5, pady=(1,1))
 
+        # Store row references
         self.row_frames = {}
 
         for r, interval in enumerate(self.time_interval, start=1):
@@ -54,6 +55,7 @@ class StepFrame(ctk.CTkFrame):
             for f in range(len(fields)-1):
                 row_frame.grid_columnconfigure(f, weight=1, uniform="row")
 
+            # Time label
             timeLabel = ctk.CTkLabel(
                 row_frame,
                 text=str(interval),
@@ -62,27 +64,56 @@ class StepFrame(ctk.CTkFrame):
             )
             timeLabel.grid(row=0, column=0, sticky="nsew", padx=5, pady=(1,1))
 
-            for f in range(1, len(fields)-1):
-                stepInput = ctk.CTkEntry(
-                    row_frame,
-                    placeholder_text=f"{interval} - {fields[f]}",
-                    justify="center",
-                    height=28,
-                    **TEXT_STYLE
-                )
-                stepInput.grid(row=0, column=f, sticky="nsew", padx=5, pady=(5,5))
+            # Waterlevel entry
+            water_entry = ctk.CTkEntry(
+                row_frame,
+                placeholder_text=f"{interval} - Waterlevel",
+                justify="center",
+                height=28,
+                **TEXT_STYLE
+            )
+            water_entry.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
 
-            self.row_frames[str(interval)] = row_frame
+            # Meter reading entry
+            meter_entry = ctk.CTkEntry(
+                row_frame,
+                placeholder_text=f"{interval} - Meter reading",
+                justify="center",
+                height=28,
+                **TEXT_STYLE
+            )
+            meter_entry.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
 
+            # Calculated meter reading (disabled entry so it looks the same)
+            calc_entry = ctk.CTkEntry(
+                row_frame,
+                justify="center",
+                height=28,
+                **TEXT_STYLE
+            )
+            calc_entry.insert(0, "")
+            calc_entry.configure(state="disabled")
+            calc_entry.grid(row=0, column=3, sticky="nsew", padx=5, pady=5)
+
+            # Store references
+            self.row_frames[str(interval)] = {
+                "frame": row_frame,
+                "water_entry": water_entry,
+                "meter_entry": meter_entry,
+                "calc_entry": calc_entry
+            }
+
+            # Q entry only once, in first row
             if r == 1:
-                QstepInput = ctk.CTkEntry(
+                self.q_entry = ctk.CTkEntry(
                     self.StepTestFrame,
                     placeholder_text="Q (m^3/h)",
                     justify="center",
                     height=30,
                     **TEXT_STYLE
                 )
-                QstepInput.grid(row=r, column=len(fields)-1, padx=5, pady=(1,1), sticky="nsew")
+                self.q_entry.grid(row=r, column=len(fields)-1, padx=5, pady=5, sticky="nsew")
+                self.q_entry.bind("<KeyRelease>", lambda e: self.update_calculated())
 
         # Timer
         self.timer = TimerFrame(self, time_intervals=self.time_interval, width=200)
@@ -90,7 +121,7 @@ class StepFrame(ctk.CTkFrame):
         self.timer.grid_propagate(False)
         self.timer.on_time_change = self.highlight_row
 
-        # Buttons (Step/Recovery/Close/Save/Done)
+        # Buttons
         if tabview is not None:
             self.buttons = ButtonFrame(self, tabview, width=200)
             self.buttons.grid(row=1, column=1, padx=10, pady=10, sticky="sew")
@@ -98,26 +129,57 @@ class StepFrame(ctk.CTkFrame):
         # Autosave
         self.schedule_autosave()
 
+    # ----- Highlight -----
     def highlight_row(self, active_time: str):
-        for time, frame in self.row_frames.items():
+        for time, row in self.row_frames.items():
             if time == active_time:
-                frame.configure(**HIGHLIGHT_STYLE)
+                row["frame"].configure(**HIGHLIGHT_STYLE)
             else:
-                frame.configure(fg_color="transparent")
+                row["frame"].configure(fg_color="transparent")
 
+    # ----- Calculated Meter Reading -----
+    def update_calculated(self):
+        q_val = self.q_entry.get().strip()
+        if not q_val:
+            for row in self.row_frames.values():
+                row["calc_entry"].configure(state="normal")
+                row["calc_entry"].delete(0, "end")
+                row["calc_entry"].configure(state="disabled")
+            return
+
+        try:
+            q = float(q_val)
+        except ValueError:
+            for row in self.row_frames.values():
+                row["calc_entry"].configure(state="normal")
+                row["calc_entry"].delete(0, "end")
+                row["calc_entry"].configure(state="disabled")
+            return
+
+        for interval, row in self.row_frames.items():
+            minutes = int(interval)
+            result = minutes / q
+            row["calc_entry"].configure(state="normal")
+            row["calc_entry"].delete(0, "end")
+            row["calc_entry"].insert(0, f"{result:.2f}")
+            row["calc_entry"].configure(state="disabled")
+
+    # ----- Data Collection -----
     def collect_data(self):
         step_data = {}
-        for interval, frame in self.row_frames.items():
-            values = []
-            for widget in frame.winfo_children():
-                if isinstance(widget, ctk.CTkEntry):
-                    values.append(widget.get())
+        for interval, row in self.row_frames.items():
+            values = [
+                row["water_entry"].get(),
+                row["meter_entry"].get(),
+                row["calc_entry"].get()
+            ]
             step_data[interval] = values
         return step_data
 
     def save_data(self):
         step_data = self.collect_data()
-        filename = save_steps(step_data, self.folder_path, self.test_number, self.date_value, self.step_name)
+        q_value = self.q_entry.get()
+        filename = save_steps(step_data, q_value, self.folder_path, self.test_number, self.date_value, self.step_name)
         now = datetime.datetime.now()
         if self.status_label:
             self.status_label.configure(

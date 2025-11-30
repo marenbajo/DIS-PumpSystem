@@ -19,7 +19,6 @@ class TimerFrame(ctk.CTkFrame):
         self.timer_frame = ctk.CTkFrame(self, width=200)
         self.timer_frame.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        # --- Timer display frame (around the label) ---
         self.display_frame = ctk.CTkFrame(
             self.timer_frame,
             **TIMER_STYLE
@@ -95,13 +94,6 @@ class TimerFrame(ctk.CTkFrame):
         if self.remaining_seconds > 0:
             self.remaining_seconds -= 1
             self._update_label()
-
-            # Optional: still fire at minute boundaries if needed
-            if self.remaining_seconds % 60 == 0 and self.on_time_change:
-                minutes = self.remaining_seconds // 60
-                if minutes in self.time_intervals:
-                    self.on_time_change(str(minutes))
-
             self.after_id = self.after(1000, self._tick)
         else:
             # Move to next interval
@@ -109,7 +101,7 @@ class TimerFrame(ctk.CTkFrame):
             if self.current_index < self.total_steps:
                 self.remaining_seconds = self.time_intervals[self.current_index] * 60
                 self._update_label()
-                self._emit_interval_start()   # highlight new row
+                self._emit_interval_start()   # highlight new row once
                 self.after_id = self.after(1000, self._tick)
             else:
                 self.running = False
@@ -119,7 +111,9 @@ class TimerFrame(ctk.CTkFrame):
     def start_countdown(self):
         if not self.running:
             self.running = True
-            self._emit_interval_start()  # highlight current row at start
+            # Only emit at the very beginning of the interval
+            if self.remaining_seconds == self.time_intervals[self.current_index] * 60:
+                self._emit_interval_start()
             self._tick()
 
     def pause_countdown(self):
@@ -129,12 +123,14 @@ class TimerFrame(ctk.CTkFrame):
             self.after_id = None
 
     def reset_countdown(self):
+        """Reset the current interval only, not jump back to 0."""
         self.pause_countdown()
         self.remaining_seconds = self.time_intervals[self.current_index] * 60
         self._update_label()
         self._emit_interval_start()
 
     def set_time_index(self, index):
+        """Manually jump to a specific interval index."""
         if 0 <= index < len(self.time_intervals):
             self.current_index = index
             self.remaining_seconds = self.time_intervals[index] * 60

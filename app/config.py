@@ -57,8 +57,17 @@ HIGHLIGHT_STYLE = {
 }
 
 SEGMENTED_STYLE = {
-    "selected_color" : "#C0CBFE",
-    "selected_hover_color" : "#6964F3",
-    "unselected_color" : "#BDC1C5",
-    "unselected_hover_color" : "#6964F3"
+    "font": ("Times New Roman", 16, "bold"),
+    "fg_color": "#C0CBFE",
+    "text_color": "black",
+    "hover_color": "#6964F3",
+    "border_color": "#6964F3",
+    "border_width": 2,
+    "height": 20,
+}
+
+COMBO_STYLE = {
+    "fg_color" : "#BDC1C5",
+    "font": ("Times New Roman", 16,),
+    "text_color": "black"
 }

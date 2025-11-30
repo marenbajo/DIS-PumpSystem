@@ -27,7 +27,7 @@ def save_customer_info(info_data: dict, notes: str, folder_path: str, test_numbe
         writer.writerow(["TestNumber", test_number])
     return filename
 
-def save_steps(step_data, folder_path, test_number, date_value, step_name):
+def save_steps(step_data, q_value, folder_path, test_number, date_value, step_name):
     filename = os.path.join(folder_path, f"Steps_{test_number}_{date_value}.csv")
 
     # Load existing rows
@@ -36,8 +36,8 @@ def save_steps(step_data, folder_path, test_number, date_value, step_name):
         with open(filename, "r", encoding="utf-8") as f:
             rows = list(csv.reader(f))
 
-    # Always ensure header
-    header = ["Step", "Time", "Meter reading", "Calculated meter reading", "Q (m³/h)"]
+    # Always ensure header with 6 columns
+    header = ["Step", "Time", "Waterlevel (m)", "Meter reading", "Calculated meter reading", "Q (m³/h)"]
     if not rows or rows[0] != header:
         rows = [header]
 
@@ -60,10 +60,11 @@ def save_steps(step_data, folder_path, test_number, date_value, step_name):
     new_rows = []
     first = True
     for interval, values in step_data.items():
+        # values should be [waterlevel, meter, calculated]
         while len(values) < 3:
             values.append("")
         label = step_name if first else ""
-        new_rows.append([label, interval] + values)
+        new_rows.append([label, interval] + values + [q_value])
         first = False
 
     # Write updated CSV
