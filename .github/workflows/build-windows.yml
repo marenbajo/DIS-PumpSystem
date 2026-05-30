@@ -33,6 +33,22 @@ jobs:
             --add-data "data/icon.ico;data" \
             --collect-all customtkinter \
             --paths . \
+            --hidden-import app.config \
+            --hidden-import app.layout \
+            --hidden-import app.icon_choice \
+            --hidden-import app.theme \
+            --hidden-import components.segmented_button \
+            --hidden-import components.customer_info_frame \
+            --hidden-import components.step_reco_tab \
+            --hidden-import components.step_frame \
+            --hidden-import components.reco_frame \
+            --hidden-import components.timer_frame \
+            --hidden-import components.buttons_frame \
+            --hidden-import components.logo_frame \
+            --hidden-import components.notes_frame \
+            --hidden-import components.testnumber_frame \
+            --hidden-import data.save_file \
+            --hidden-import data.pdf_exporter \
             run.py
 
       - name: Upload artifact
