@@ -32,6 +32,7 @@ jobs:
             --add-data "data/icon.png;data" \
             --add-data "data/icon.ico;data" \
             --collect-all customtkinter \
+            --paths . \
             run.py
 
       - name: Upload artifact
