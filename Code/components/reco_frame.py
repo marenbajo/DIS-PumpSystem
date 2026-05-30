@@ -3,14 +3,30 @@ import datetime
 from app.config import LABEL_STYLE, TEXT_STYLE, HIGHLIGHT_STYLE
 from components.timer_frame import TimerFrame
 from components.buttons_frame import ButtonFrame
-from data.save_file import save_recoveries, start_new_session
+from data.save_file import save_recoveries
+
 
 class RecoFrame(ctk.CTkFrame):
-    def __init__(self, master, tabview=None, reco_name="Recovery 1", status_label=None, autosave_interval=60000, **kwargs):
+    def __init__(
+        self,
+        master,
+        tabview=None,
+        reco_name="Recovery 1",
+        status_label=None,
+        autosave_interval=60000,
+        folder_path=None,
+        test_number=None,
+        date_value=None,
+        **kwargs
+    ):
         super().__init__(master, fg_color="transparent", **kwargs)
 
         self.reco_name = reco_name
-        self.folder_path, self.test_number, self.date_value = start_new_session()
+
+        # Use session info passed in from outside (StepRecoTab)
+        self.folder_path = folder_path
+        self.test_number = test_number
+        self.date_value = date_value
 
         # Shared status label (passed in from App) or local fallback
         self.status_label = status_label
@@ -24,9 +40,10 @@ class RecoFrame(ctk.CTkFrame):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=0)
 
-        self.time_interval_l = [1,3,5,7,10,15,20,25,30,35,40]
-        self.time_interval_r = [50,60,70,80,90,100,120,180,210,240,250]
-        fields = ["Time (min)", "Waterlevel (m)", "s", "Time (min)", "Waterlevel (m)", "s"]
+        self.time_interval_l = [1, 3, 5, 7, 10, 15, 20, 25, 30, 35, 40]
+        self.time_interval_r = [50, 60, 70, 80, 90, 100, 120, 180, 210, 240, 250]
+        fields = ["Time (min)", "Waterlevel (m)", "s",
+                  "Time (min)", "Waterlevel (m)", "s"]
 
         # Table
         self.RecoTestFrame = ctk.CTkFrame(self)
@@ -34,7 +51,12 @@ class RecoFrame(ctk.CTkFrame):
 
         for i, field in enumerate(fields):
             self.RecoTestFrame.grid_columnconfigure(i, weight=1, uniform="col")
-            headingLabel = ctk.CTkLabel(self.RecoTestFrame, text=field, anchor="center", **LABEL_STYLE)
+            headingLabel = ctk.CTkLabel(
+                self.RecoTestFrame,
+                text=field,
+                anchor="center",
+                **LABEL_STYLE
+            )
             headingLabel.grid(row=0, column=i, sticky="nsew", padx=5, pady=1)
 
         # Store row frames
@@ -50,7 +72,12 @@ class RecoFrame(ctk.CTkFrame):
             for c in range(3):
                 row_frame.grid_columnconfigure(c, weight=1, uniform="row")
 
-            timeLabel = ctk.CTkLabel(row_frame, text=str(interval), anchor="center", **TEXT_STYLE)
+            timeLabel = ctk.CTkLabel(
+                row_frame,
+                text=str(interval),
+                anchor="center",
+                **TEXT_STYLE
+            )
             timeLabel.grid(row=0, column=0, sticky="nsew", padx=5, pady=1)
 
             for f in range(1, 3):
@@ -61,7 +88,7 @@ class RecoFrame(ctk.CTkFrame):
                     height=30,
                     **TEXT_STYLE
                 )
-                entry.grid(row=0, column=f, sticky="nsew", padx=5, pady=(5,5))
+                entry.grid(row=0, column=f, sticky="nsew", padx=5, pady=(5, 5))
 
             self.row_frames[f"L{interval}"] = row_frame
 
@@ -74,7 +101,12 @@ class RecoFrame(ctk.CTkFrame):
             for c in range(3):
                 row_frame.grid_columnconfigure(c, weight=1, uniform="row")
 
-            timeLabel = ctk.CTkLabel(row_frame, text=str(interval), anchor="center", **TEXT_STYLE)
+            timeLabel = ctk.CTkLabel(
+                row_frame,
+                text=str(interval),
+                anchor="center",
+                **TEXT_STYLE
+            )
             timeLabel.grid(row=0, column=0, sticky="nsew", padx=5, pady=1)
 
             for f in range(4, 6):
@@ -85,7 +117,7 @@ class RecoFrame(ctk.CTkFrame):
                     height=30,
                     **TEXT_STYLE
                 )
-                entry.grid(row=0, column=f-3, sticky="nsew", padx=5, pady=(5,5))
+                entry.grid(row=0, column=f - 3, sticky="nsew", padx=5, pady=(5, 5))
 
             self.row_frames[f"R{interval}"] = row_frame
 
@@ -106,7 +138,7 @@ class RecoFrame(ctk.CTkFrame):
 
     def highlight_row(self, active_time: str):
         for time, frame in self.row_frames.items():
-            if time == active_time or time.endswith(active_time):
+            if time == f"L{active_time}" or time == f"R{active_time}":
                 frame.configure(**HIGHLIGHT_STYLE)
             else:
                 frame.configure(fg_color="transparent")
@@ -123,7 +155,14 @@ class RecoFrame(ctk.CTkFrame):
 
     def save_data(self):
         reco_data = self.collect_data()
-        filename = save_recoveries(reco_data, self.folder_path, self.test_number, self.date_value, self.reco_name)
+
+        filename = save_recoveries(
+            reco_data,
+            self.folder_path,
+            self.test_number,
+            self.date_value,
+            self.reco_name
+        )
 
         now = datetime.datetime.now()
         if self.status_label:

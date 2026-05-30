@@ -1,13 +1,13 @@
 import csv
 import datetime
 import os
-from components.testnumber_frame import get_test_number
+from components.testnumber_frame import next_test_number
 
 BASE_FOLDER = "data_files"
 
 def start_new_session():
     """Create a folder for this test session."""
-    test_number = get_test_number()
+    test_number = next_test_number()
     date_value = datetime.date.today().strftime("%Y-%m-%d")
     folder_name = f"Pump_Test_{test_number}_{date_value}"
     folder_path = os.path.join(BASE_FOLDER, folder_name)

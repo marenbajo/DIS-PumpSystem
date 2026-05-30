@@ -53,7 +53,7 @@ class TimerFrame(ctk.CTkFrame):
         # Restart button below
         self.reset_button = ctk.CTkButton(
             self.timer_frame,
-            text="Restart",
+            text="Reset",
             command=self.reset_countdown,
             **TIMER_BUTTON_STYLE
         )

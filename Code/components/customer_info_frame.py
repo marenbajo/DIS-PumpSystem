@@ -1,19 +1,29 @@
-# components/info_frame.py
 import customtkinter as ctk
 import datetime
-from data.save_file import start_new_session, save_customer_info
+from data.save_file import save_customer_info
 from components.notes_frame import NotesFrame
 from app.config import TEXT_STYLE, BUTTON_STYLE
 
 class InfoFrame(ctk.CTkFrame):
-    def __init__(self, master, autosave_interval=60000, status_label=None, **kwargs):
+    def __init__(
+        self,
+        master,
+        folder_path,
+        test_number,
+        date_value,
+        autosave_interval=60000,
+        status_label=None,
+        **kwargs
+    ):
         super().__init__(master, fg_color="transparent", **kwargs)
+
+        # Use the REAL session info passed from SegmentedButton
+        self.folder_path = folder_path
+        self.test_number = test_number
+        self.date_value = date_value
 
         self.entries = {}
         self.autosave_interval = autosave_interval
-
-        # Create session folder when InfoFrame starts
-        self.folder_path, self.test_number, self.date_value = start_new_session()
 
         # Shared status label (passed in from App)
         self.status_label = status_label
@@ -45,8 +55,10 @@ class InfoFrame(ctk.CTkFrame):
 
         # Notes section
         self.notes_frame = NotesFrame(self)
-        self.notes_frame.grid(row=4, column=0, rowspan=2, columnspan=6,
-                              padx=10, pady=(10, 0), sticky="sew")
+        self.notes_frame.grid(
+            row=4, column=0, rowspan=2, columnspan=6,
+            padx=10, pady=(10, 0), sticky="sew"
+        )
 
         # Save button
         self.save_button = ctk.CTkButton(
@@ -55,13 +67,22 @@ class InfoFrame(ctk.CTkFrame):
             command=self.save_data,
             **BUTTON_STYLE
         )
-        self.save_button.grid(row=6, column=0, columnspan=6,
-                              pady=(10, 10), padx=10, sticky="e")
+        self.save_button.grid(
+            row=6, column=0, columnspan=6,
+            pady=(10, 10), padx=10, sticky="e"
+        )
 
         # If no shared status label was passed, create a local one
         if not self.status_label:
-            self.status_label = ctk.CTkLabel(self, text="", font=("Times New Roman", 12))
-            self.status_label.grid(row=7, column=0, columnspan=6, pady=(5, 5), sticky="w")
+            self.status_label = ctk.CTkLabel(
+                self,
+                text="",
+                font=("Times New Roman", 12)
+            )
+            self.status_label.grid(
+                row=7, column=0, columnspan=6,
+                pady=(5, 5), sticky="w"
+            )
 
         # Autosave
         self.schedule_autosave()
@@ -82,14 +103,17 @@ class InfoFrame(ctk.CTkFrame):
     def collect_data(self):
         data = {field: entry.get() for field, entry in self.entries.items()}
         notes = ""
+
         if hasattr(self.notes_frame, "textbox"):
             notes = self.notes_frame.textbox.get("1.0", "end").strip()
         elif hasattr(self.notes_frame, "get"):
             notes = self.notes_frame.get().strip()
+
         return data, notes
 
     def save_data(self):
         info_data, notes = self.collect_data()
+
         filename = save_customer_info(
             info_data,
             notes,
@@ -97,11 +121,13 @@ class InfoFrame(ctk.CTkFrame):
             self.test_number,
             self.date_value
         )
+
         now = datetime.datetime.now()
         if self.status_label:
             self.status_label.configure(
                 text=f"Saved Customer Info for Test {self.test_number} at {now.strftime('%Y-%m-%d %H:%M')}"
             )
+
         print(f"[Manual/Auto Save] Customer info updated in {filename}")
 
     def schedule_autosave(self):

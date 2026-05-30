@@ -1,0 +1,42 @@
+name: Build Windows Executable
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # allows manual trigger from GitHub UI
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r Code/requirements.txt pyinstaller
+
+      - name: Build executable
+        shell: bash
+        run: |
+          cd Code
+          pyinstaller --noconfirm --onedir --windowed \
+            --name "DIS_PumpSystem" \
+            --icon "data/icon.ico" \
+            --add-data "data/dis_logo.jpg;data" \
+            --add-data "data/icon.png;data" \
+            --add-data "data/icon.ico;data" \
+            --collect-all customtkinter \
+            run.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DIS_PumpSystem_Windows
+          path: Code/dist/DIS_PumpSystem/
+          retention-days: 30

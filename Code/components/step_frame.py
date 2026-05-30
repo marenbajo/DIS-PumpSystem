@@ -3,14 +3,30 @@ import datetime
 from app.config import LABEL_STYLE, TEXT_STYLE, HIGHLIGHT_STYLE
 from components.timer_frame import TimerFrame
 from components.buttons_frame import ButtonFrame
-from data.save_file import save_steps, start_new_session
+from data.save_file import save_steps
+
 
 class StepFrame(ctk.CTkFrame):
-    def __init__(self, master, tabview=None, step_name="Step 1", status_label=None, autosave_interval=60000, **kwargs):
+    def __init__(
+        self,
+        master,
+        tabview=None,
+        step_name="Step 1",
+        status_label=None,
+        autosave_interval=60000,
+        folder_path=None,
+        test_number=None,
+        date_value=None,
+        **kwargs
+    ):
         super().__init__(master, fg_color="transparent", **kwargs)
 
         self.step_name = step_name
-        self.folder_path, self.test_number, self.date_value = start_new_session()
+
+        # Use session info passed in from outside (StepRecoTab)
+        self.folder_path = folder_path
+        self.test_number = test_number
+        self.date_value = date_value
 
         # Shared status label
         self.status_label = status_label
@@ -25,7 +41,7 @@ class StepFrame(ctk.CTkFrame):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=0, minsize=250)
 
-        self.time_interval = [1,3,5,7,10,15,20,25,30,35,40,50,60]
+        self.time_interval = [1, 3, 5, 7, 10, 15, 20, 25, 30, 35, 40, 50, 60]
         fields = ["Time (min)", "Waterlevel (m)", "Meter reading",
                   "Calculated Meter reading", "Q(m^3/h)"]
 
@@ -40,7 +56,7 @@ class StepFrame(ctk.CTkFrame):
                 anchor="center",
                 **LABEL_STYLE
             )
-            headingLabel.grid(row=0, column=i, sticky="nsew", padx=5, pady=(1,1))
+            headingLabel.grid(row=0, column=i, sticky="nsew", padx=5, pady=(1, 1))
 
         # Store row references
         self.row_frames = {}
@@ -49,10 +65,10 @@ class StepFrame(ctk.CTkFrame):
             self.StepTestFrame.grid_rowconfigure(r, weight=1)
 
             row_frame = ctk.CTkFrame(self.StepTestFrame, fg_color="transparent", corner_radius=6)
-            row_frame.grid(row=r, column=0, columnspan=len(fields)-1, sticky="nsew", padx=2)
+            row_frame.grid(row=r, column=0, columnspan=len(fields) - 1, sticky="nsew", padx=2)
 
             row_frame.grid_rowconfigure(0, weight=1)
-            for f in range(len(fields)-1):
+            for f in range(len(fields) - 1):
                 row_frame.grid_columnconfigure(f, weight=1, uniform="row")
 
             # Time label
@@ -62,7 +78,7 @@ class StepFrame(ctk.CTkFrame):
                 anchor="center",
                 **TEXT_STYLE
             )
-            timeLabel.grid(row=0, column=0, sticky="nsew", padx=5, pady=(1,1))
+            timeLabel.grid(row=0, column=0, sticky="nsew", padx=5, pady=(1, 1))
 
             # Waterlevel entry
             water_entry = ctk.CTkEntry(
@@ -112,7 +128,7 @@ class StepFrame(ctk.CTkFrame):
                     height=30,
                     **TEXT_STYLE
                 )
-                self.q_entry.grid(row=r, column=len(fields)-1, padx=5, pady=5, sticky="nsew")
+                self.q_entry.grid(row=r, column=len(fields) - 1, padx=5, pady=5, sticky="nsew")
                 self.q_entry.bind("<KeyRelease>", lambda e: self.update_calculated())
 
         # Timer
@@ -179,7 +195,16 @@ class StepFrame(ctk.CTkFrame):
     def save_data(self):
         step_data = self.collect_data()
         q_value = self.q_entry.get()
-        filename = save_steps(step_data, q_value, self.folder_path, self.test_number, self.date_value, self.step_name)
+
+        filename = save_steps(
+            step_data,
+            q_value,
+            self.folder_path,
+            self.test_number,
+            self.date_value,
+            self.step_name
+        )
+
         now = datetime.datetime.now()
         if self.status_label:
             self.status_label.configure(

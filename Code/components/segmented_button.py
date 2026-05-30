@@ -4,11 +4,16 @@ from components.customer_info_frame import InfoFrame
 from components.step_reco_tab import StepRecoTab
 
 class SegmentedButton(ctk.CTkFrame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, folder_path, test_number, date_value, **kwargs):
         super().__init__(master, **kwargs)
 
-        self.grid_rowconfigure(0, weight=0)   # segmented button row
-        self.grid_rowconfigure(1, weight=1)   # frame row expands
+        # Store session info
+        self.folder_path = folder_path
+        self.test_number = test_number
+        self.date_value = date_value
+
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
@@ -31,22 +36,32 @@ class SegmentedButton(ctk.CTkFrame):
         )
         self.test_button.grid(row=0, column=1, sticky="ew", padx=2, pady=0)
 
-        # Create both frames and grid them in the same cell
-        self.info_frame = InfoFrame(self)
-        self.test_frame = StepRecoTab(self)
+        # Create both frames WITH SESSION INFO
+        self.info_frame = InfoFrame(
+            self,
+            folder_path=self.folder_path,
+            test_number=self.test_number,
+            date_value=self.date_value
+        )
 
-        self.info_frame.grid(row=1, column=0, columnspan = 2, sticky="nsew")
-        self.test_frame.grid(row=1, column=0, columnspan = 2, sticky="nsew")
+        self.test_frame = StepRecoTab(
+            self,
+            self.folder_path,
+            self.test_number,
+            self.date_value
+        )
 
-        # Show the initial frame
+        self.info_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        self.test_frame.grid(row=1, column=0, columnspan=2, sticky="nsew")
+
         self.show_frame("Client Information")
 
     def show_frame(self, value):
         if value == "Client Information":
             self.info_frame.tkraise()
-            self.client_info_button.configure(fg_color = self.active_color)
-            self.test_button.configure(fg_color = self.inactive_color)
+            self.client_info_button.configure(fg_color=self.active_color)
+            self.test_button.configure(fg_color=self.inactive_color)
         elif value == "Test":
             self.test_frame.tkraise()
-            self.test_button.configure(fg_color = self.active_color)
-            self.client_info_button.configure(fg_color = self.inactive_color)
+            self.test_button.configure(fg_color=self.active_color)
+            self.client_info_button.configure(fg_color=self.inactive_color)

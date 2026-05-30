@@ -1,14 +1,19 @@
 import customtkinter as ctk
 from tkinter import messagebox
-import os
-import csv
 from app.config import TEXT_STYLE, COMBO_STYLE
 from components.step_frame import StepFrame
 from components.reco_frame import RecoFrame
+from data.pdf_exporter import export_session_to_pdf
+
 
 class StepRecoTab(ctk.CTkFrame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, folder_path, test_number, date_value, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
+
+        # Store session info
+        self.folder_path = folder_path
+        self.test_number = test_number
+        self.date_value = date_value
 
         # Counters
         self.step_count = 1
@@ -29,9 +34,7 @@ class StepRecoTab(ctk.CTkFrame):
             width=150,
             **COMBO_STYLE
         )
-
-        self.tab_selector.grid(row=0, column=0, pady=(8, 6))
-        self.tab_selector.grid(sticky="n")
+        self.tab_selector.grid(row=0, column=0, pady=(8, 6), sticky="n")
 
         # --- Content container ---
         self.container = ctk.CTkFrame(self, fg_color="transparent")
@@ -61,12 +64,18 @@ class StepRecoTab(ctk.CTkFrame):
             self.step_count = self._next_step_number()
             tab_name = f"Step {self.step_count}"
 
-        # Update combobox values
         values = list(self.frames.keys()) + [tab_name]
         self.tab_selector.configure(values=values)
         self.tab_selector.set(tab_name)
 
-        frame = StepFrame(self.container, tabview=self, step_name=tab_name)
+        frame = StepFrame(
+            self.container,
+            tabview=self,
+            step_name=tab_name,
+            folder_path=self.folder_path,
+            test_number=self.test_number,
+            date_value=self.date_value
+        )
         frame.grid(row=0, column=0, sticky="nsew")
         self.frames[tab_name] = frame
 
@@ -80,7 +89,14 @@ class StepRecoTab(ctk.CTkFrame):
         self.tab_selector.configure(values=values)
         self.tab_selector.set(tab_name)
 
-        frame = RecoFrame(self.container, tabview=self, reco_name=tab_name)
+        frame = RecoFrame(
+            self.container,
+            tabview=self,
+            reco_name=tab_name,
+            folder_path=self.folder_path,
+            test_number=self.test_number,
+            date_value=self.date_value
+        )
         frame.grid(row=0, column=0, sticky="nsew")
         self.frames[tab_name] = frame
 
@@ -110,7 +126,6 @@ class StepRecoTab(ctk.CTkFrame):
         if frame:
             frame.destroy()
 
-        # Update combobox values
         values = list(self.frames.keys())
         self.tab_selector.configure(values=values)
         if values:
@@ -128,3 +143,12 @@ class StepRecoTab(ctk.CTkFrame):
             frame.save_data()
         else:
             messagebox.showinfo("Save", f"No saveable frame found in '{current_tab}'")
+
+    # --- Finish session (EXPORT PDF) ----------------------------------------
+    def finish_session(self):
+        pdf_path = export_session_to_pdf(
+            self.folder_path,
+            self.test_number,
+            self.date_value
+        )
+        messagebox.showinfo("PDF Exported", f"PDF saved to:\n{pdf_path}")

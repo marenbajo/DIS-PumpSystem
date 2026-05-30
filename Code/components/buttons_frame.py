@@ -51,5 +51,7 @@ class ButtonFrame(ctk.CTkFrame):
             self,
             text="Done",
             **BUTTON_STYLE,
+            command=self.tabview.finish_session
         )
         self.done_button.grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky="sew")
+
