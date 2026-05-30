@@ -1,8 +1,16 @@
 import customtkinter as ctk
 from app.config import TEST_NUM_STYLE
 import os
+import sys
 
-BASE_FOLDER = "data_files"
+def _get_base_folder():
+    if getattr(sys, "frozen", False):
+        base = os.path.dirname(sys.executable)
+    else:
+        base = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    return os.path.join(base, "data_files")
+
+BASE_FOLDER = _get_base_folder()
 _current_test_number = 0
 
 

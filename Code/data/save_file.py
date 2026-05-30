@@ -1,9 +1,20 @@
 import csv
 import datetime
 import os
+import sys
 from components.testnumber_frame import next_test_number
 
-BASE_FOLDER = "data_files"
+def _get_base_folder():
+    """Gibt den data_files-Pfad zurück – relativ zur Exe (PyInstaller) oder zum Code-Ordner (Entwicklung)."""
+    if getattr(sys, "frozen", False):
+        # PyInstaller: data_files neben der .exe anlegen
+        base = os.path.dirname(sys.executable)
+    else:
+        # Entwicklung: data_files im Code/-Ordner
+        base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base, "data_files")
+
+BASE_FOLDER = _get_base_folder()
 
 def start_new_session():
     """Create a folder for this test session."""
