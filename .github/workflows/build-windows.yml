@@ -30,6 +30,7 @@ jobs:
           cd Code
           python -m nuitka \
             --standalone \
+            --assume-yes-for-downloads \
             --windows-console-mode=disable \
             --enable-plugin=tk-inter \
             --windows-icon-from-ico=data/icon.ico \
