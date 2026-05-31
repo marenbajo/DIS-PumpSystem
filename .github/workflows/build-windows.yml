@@ -22,15 +22,14 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install customtkinter fpdf2 Pillow nuitka ordered-set zstandard
+        run: pip install customtkinter fpdf2 Pillow nuitka ordered-set zstandard pefile
 
       - name: Build executable with Nuitka
         shell: bash
         run: |
           cd Code
-          python -m nuitka \
+          echo "yes" | python -m nuitka \
             --standalone \
-            --assume-yes-for-downloads \
             --windows-console-mode=disable \
             --enable-plugin=tk-inter \
             --windows-icon-from-ico=data/icon.ico \
