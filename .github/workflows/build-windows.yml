@@ -30,7 +30,7 @@ jobs:
           cd Code
           echo "yes" | python -m nuitka \
             --standalone \
-            --windows-console-mode=disable \
+            --windows-console-mode=attach \
             --enable-plugin=tk-inter \
             --windows-icon-from-ico=data/icon.ico \
             --include-data-files=data/dis_logo.jpg=data/dis_logo.jpg \
