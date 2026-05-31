@@ -1,6 +1,6 @@
 import customtkinter as ctk
-from app.config import LOGO_STYLE
-from components.testnumber_frame import TestnumberFrame
+from config import LOGO_STYLE
+from testnumber_frame import TestnumberFrame
 
 class LogoFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):

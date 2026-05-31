@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from app.config import TIMER_BUTTON_STYLE, TIMER_STYLE
+from config import TIMER_BUTTON_STYLE, TIMER_STYLE
 
 class TimerFrame(ctk.CTkFrame):
     def __init__(self, master, time_intervals, **kwargs):

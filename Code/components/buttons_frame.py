@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from tkinter import messagebox
-from app.config import BUTTON_STYLE
+from config import BUTTON_STYLE
 
 class ButtonFrame(ctk.CTkFrame):
     def __init__(self, master, tabview, **kwargs):

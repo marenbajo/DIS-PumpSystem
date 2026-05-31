@@ -1,9 +1,9 @@
 import customtkinter as ctk
 import datetime
-from app.config import LABEL_STYLE, TEXT_STYLE, HIGHLIGHT_STYLE
-from components.timer_frame import TimerFrame
-from components.buttons_frame import ButtonFrame
-from data.save_file import save_steps
+from config import LABEL_STYLE, TEXT_STYLE, HIGHLIGHT_STYLE
+from timer_frame import TimerFrame
+from buttons_frame import ButtonFrame
+from save_file import save_steps
 
 
 class StepFrame(ctk.CTkFrame):

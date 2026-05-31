@@ -1,17 +1,21 @@
 import os
+import sys
 import platform
 import tkinter as tk
 
 def set_app_icon(app, ico_name="icon.ico", png_name="icon.png"):
-    """
-    Set the application icon using paths relative to the project root.
-    Works regardless of the current working directory.
-    """
+    """Setzt das App-Icon – funktioniert im Dev-Modus und im PyInstaller-Bundle."""
 
-    # __file__ is inside app/, so go up one level to project root
-    base_dir = os.path.dirname(os.path.dirname(__file__))
-    ico_path = os.path.join(base_dir, "data", ico_name)
-    png_path = os.path.join(base_dir, "data", png_name)
+    if getattr(sys, "frozen", False):
+        # PyInstaller-Exe: Icons liegen in sys._MEIPASS/data/
+        base_dir = os.path.join(sys._MEIPASS, "data")
+    else:
+        # Entwicklung: Icons liegen in Code/data/
+        # __file__ = Code/app/icon_choice.py → eine Ebene hoch = Code/
+        base_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+
+    ico_path = os.path.join(base_dir, ico_name)
+    png_path = os.path.join(base_dir, png_name)
 
     system = platform.system()
     if system == "Windows":

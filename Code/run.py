@@ -1,16 +1,18 @@
 import sys
 import os
 
-# Make Code/ and Code/app/ available for all imports
-_code_dir = os.path.dirname(os.path.abspath(__file__))
-_app_dir  = os.path.join(_code_dir, "app")
+# Absoluter Pfad zum Code/-Ordner (dort liegt diese Datei)
+_here = os.path.dirname(os.path.abspath(__file__))
 
-for _p in (_app_dir, _code_dir):
+# Alle Unterordner in sys.path legen, damit flache Imports funktionieren
+# (sowohl in Entwicklung als auch im PyInstaller-Bundle)
+for _subdir in ('', 'app', 'components', 'data'):
+    _p = os.path.join(_here, _subdir)
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from app.main import App
+from main import App
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = App()
     app.mainloop()

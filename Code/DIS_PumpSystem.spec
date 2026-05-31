@@ -2,15 +2,18 @@
 import os
 from PyInstaller.utils.hooks import collect_all
 
-# SPECPATH ist eine PyInstaller-Variable: absoluter Pfad zum Ordner dieser Spec-Datei (= Code/)
-CODE_DIR = SPECPATH
+# SPECPATH = absoluter Pfad zum Code/-Ordner (PyInstaller-Variable)
+APP_DIR  = os.path.join(SPECPATH, 'app')
+COMP_DIR = os.path.join(SPECPATH, 'components')
+DATA_DIR = os.path.join(SPECPATH, 'data')
 
-# customtkinter komplett einsammeln (Themes, Assets, Submodule)
+# customtkinter komplett einsammeln
 ctk_datas, ctk_binaries, ctk_hiddenimports = collect_all('customtkinter')
 
 a = Analysis(
     ['run.py'],
-    pathex=[CODE_DIR],
+    # Alle Unterordner in den Analysepfad – PyInstaller findet alle Module flach
+    pathex=[SPECPATH, APP_DIR, COMP_DIR, DATA_DIR],
     binaries=ctk_binaries,
     datas=[
         ('data/dis_logo.jpg', 'data'),
@@ -18,25 +21,14 @@ a = Analysis(
         ('data/icon.ico',     'data'),
     ] + ctk_datas,
     hiddenimports=ctk_hiddenimports + [
-        # app-Paket
-        'app.config',
-        'app.layout',
-        'app.icon_choice',
-        'app.theme',
-        # components-Paket
-        'components.segmented_button',
-        'components.customer_info_frame',
-        'components.step_reco_tab',
-        'components.step_frame',
-        'components.reco_frame',
-        'components.timer_frame',
-        'components.buttons_frame',
-        'components.logo_frame',
-        'components.notes_frame',
-        'components.testnumber_frame',
-        # data-Paket
-        'data.save_file',
-        'data.pdf_exporter',
+        # app/
+        'config', 'layout', 'icon_choice', 'theme', 'main',
+        # components/
+        'segmented_button', 'customer_info_frame', 'step_reco_tab',
+        'step_frame', 'reco_frame', 'timer_frame', 'buttons_frame',
+        'logo_frame', 'notes_frame', 'testnumber_frame',
+        # data/
+        'save_file', 'pdf_exporter',
     ],
     hookspath=[],
     runtime_hooks=[],

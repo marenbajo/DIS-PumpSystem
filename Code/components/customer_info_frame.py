@@ -1,8 +1,8 @@
 import customtkinter as ctk
 import datetime
-from data.save_file import save_customer_info
-from components.notes_frame import NotesFrame
-from app.config import TEXT_STYLE, BUTTON_STYLE
+from save_file import save_customer_info
+from notes_frame import NotesFrame
+from config import TEXT_STYLE, BUTTON_STYLE
 
 class InfoFrame(ctk.CTkFrame):
     def __init__(

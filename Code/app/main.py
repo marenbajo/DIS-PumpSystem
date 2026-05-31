@@ -1,10 +1,10 @@
 import customtkinter as ctk
-from app.config import configure_theme
-from app.layout import layout_config
-from data.save_file import start_new_session
-from app.icon_choice import set_app_icon
-from components.logo_frame import LogoFrame
-from components.segmented_button import SegmentedButton
+from config import configure_theme
+from layout import layout_config
+from save_file import start_new_session
+from icon_choice import set_app_icon
+from logo_frame import LogoFrame
+from segmented_button import SegmentedButton
 
 class App(ctk.CTk):
     def __init__(self):

@@ -1,9 +1,9 @@
 import customtkinter as ctk
 from tkinter import messagebox
-from app.config import TEXT_STYLE, COMBO_STYLE
-from components.step_frame import StepFrame
-from components.reco_frame import RecoFrame
-from data.pdf_exporter import export_session_to_pdf
+from config import TEXT_STYLE, COMBO_STYLE
+from step_frame import StepFrame
+from reco_frame import RecoFrame
+from pdf_exporter import export_session_to_pdf
 
 
 class StepRecoTab(ctk.CTkFrame):

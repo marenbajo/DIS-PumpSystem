@@ -2,7 +2,7 @@ import csv
 import datetime
 import os
 import sys
-from components.testnumber_frame import next_test_number
+from testnumber_frame import next_test_number
 
 def _get_base_folder():
     """Gibt den data_files-Pfad zurück – relativ zur Exe (PyInstaller) oder zum Code-Ordner (Entwicklung)."""

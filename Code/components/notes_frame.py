@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from app.config import TEXT_STYLE
+from config import TEXT_STYLE
 
 class NotesFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):

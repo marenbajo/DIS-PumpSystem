@@ -1,7 +1,7 @@
 import customtkinter as ctk
-from app.config import SEGMENTED_STYLE
-from components.customer_info_frame import InfoFrame
-from components.step_reco_tab import StepRecoTab
+from config import SEGMENTED_STYLE
+from customer_info_frame import InfoFrame
+from step_reco_tab import StepRecoTab
 
 class SegmentedButton(ctk.CTkFrame):
     def __init__(self, master, folder_path, test_number, date_value, **kwargs):
