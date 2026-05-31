@@ -1,19 +1,23 @@
 # -*- mode: python ; coding: utf-8 -*-
 import os
+from PyInstaller.utils.hooks import collect_all
 
-# Pfad zum Code/-Ordner (dort liegt diese .spec-Datei)
+# Pfad zum Code/-Ordner
 CODE_DIR = os.path.abspath('.')
+
+# customtkinter komplett einsammeln (Themes, Assets, Submodule)
+ctk_datas, ctk_binaries, ctk_hiddenimports = collect_all('customtkinter')
 
 a = Analysis(
     ['run.py'],
-    pathex=[CODE_DIR],          # Code/ ist in sys.path → app/, components/, data/ findbar
-    binaries=[],
+    pathex=[CODE_DIR],
+    binaries=ctk_binaries,
     datas=[
         ('data/dis_logo.jpg', 'data'),
         ('data/icon.png',     'data'),
         ('data/icon.ico',     'data'),
-    ],
-    hiddenimports=[
+    ] + ctk_datas,
+    hiddenimports=ctk_hiddenimports + [
         # app-Paket
         'app.config',
         'app.layout',
@@ -34,7 +38,6 @@ a = Analysis(
         'data.save_file',
         'data.pdf_exporter',
     ],
-    collect_all=['customtkinter'],
     hookspath=[],
     runtime_hooks=[],
     excludes=[],
@@ -50,7 +53,7 @@ exe = EXE(
     exclude_binaries=True,
     name='DIS_PumpSystem',
     debug=False,
-    console=False,          # kein schwarzes Terminal-Fenster
+    console=False,
     icon='data/icon.ico',
 )
 
