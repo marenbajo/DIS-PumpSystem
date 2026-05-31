@@ -3,7 +3,7 @@ name: Build Windows Executable
 on:
   push:
     branches: [main]
-  workflow_dispatch:   # allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -22,13 +22,30 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r Code/requirements.txt pyinstaller
+        run: pip install customtkinter fpdf2 Pillow nuitka ordered-set zstandard
 
-      - name: Build executable
+      - name: Build executable with Nuitka
         shell: bash
         run: |
           cd Code
-          pyinstaller --noconfirm DIS_PumpSystem.spec
+          python -m nuitka \
+            --standalone \
+            --windows-console-mode=disable \
+            --enable-plugin=tk-inter \
+            --windows-icon-from-ico=data/icon.ico \
+            --include-data-files=data/dis_logo.jpg=data/dis_logo.jpg \
+            --include-data-files=data/icon.png=data/icon.png \
+            --include-data-files=data/icon.ico=data/icon.ico \
+            --include-package=customtkinter \
+            --include-package=fpdf \
+            --include-package=PIL \
+            --output-dir=dist \
+            --output-filename=DIS_PumpSystem \
+            run.py
+
+      - name: Rename output folder
+        shell: bash
+        run: mv "Code/dist/run.dist" "Code/dist/DIS_PumpSystem"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
