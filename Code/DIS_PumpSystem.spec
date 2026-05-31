@@ -2,8 +2,8 @@
 import os
 from PyInstaller.utils.hooks import collect_all
 
-# Pfad zum Code/-Ordner
-CODE_DIR = os.path.abspath('.')
+# SPECPATH ist eine PyInstaller-Variable: absoluter Pfad zum Ordner dieser Spec-Datei (= Code/)
+CODE_DIR = SPECPATH
 
 # customtkinter komplett einsammeln (Themes, Assets, Submodule)
 ctk_datas, ctk_binaries, ctk_hiddenimports = collect_all('customtkinter')
