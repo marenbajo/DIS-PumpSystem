@@ -2,17 +2,11 @@ import os
 import sys
 import platform
 import tkinter as tk
+from paths import get_data_dir
 
 def set_app_icon(app, ico_name="icon.ico", png_name="icon.png"):
-    """Setzt das App-Icon – funktioniert im Dev-Modus und im PyInstaller-Bundle."""
-
-    if getattr(sys, "frozen", False):
-        # PyInstaller-Exe: Icons liegen in sys._MEIPASS/data/
-        base_dir = os.path.join(sys._MEIPASS, "data")
-    else:
-        # Entwicklung: Icons liegen in Code/data/
-        # __file__ = Code/app/icon_choice.py → eine Ebene hoch = Code/
-        base_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+    """Setzt das App-Icon – funktioniert im Dev-Modus, PyInstaller und Nuitka."""
+    base_dir = get_data_dir()
 
     ico_path = os.path.join(base_dir, ico_name)
     png_path = os.path.join(base_dir, png_name)

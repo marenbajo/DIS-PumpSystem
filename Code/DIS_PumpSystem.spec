@@ -22,7 +22,7 @@ a = Analysis(
     ] + ctk_datas,
     hiddenimports=ctk_hiddenimports + [
         # app/
-        'config', 'layout', 'icon_choice', 'theme', 'main',
+        'config', 'layout', 'icon_choice', 'theme', 'main', 'paths',
         # components/
         'segmented_button', 'customer_info_frame', 'step_reco_tab',
         'step_frame', 'reco_frame', 'timer_frame', 'buttons_frame',

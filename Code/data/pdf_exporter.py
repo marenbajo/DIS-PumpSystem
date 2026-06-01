@@ -2,15 +2,11 @@ import csv
 import os
 import sys
 from fpdf import FPDF
-
+from paths import get_data_dir
 
 def _resource_path(filename):
-    """Gibt den Pfad zu einer Ressource zurück – funktioniert sowohl normal als auch in einer PyInstaller-Exe."""
-    if getattr(sys, "frozen", False):
-        base = sys._MEIPASS
-    else:
-        base = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(base, filename)
+    """Gibt den Pfad zu einer Ressource im data/-Ordner zurück."""
+    return os.path.join(get_data_dir(), filename)
 
 # Brand colors (R, G, B)
 BLUE       = (22, 73, 196)    # #1649C4

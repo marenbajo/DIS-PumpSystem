@@ -22,30 +22,42 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install customtkinter fpdf2 Pillow nuitka ordered-set zstandard pefile
+        run: pip install customtkinter fpdf2 Pillow pyinstaller
 
-      - name: Build executable with Nuitka
+      - name: Build executable
         shell: bash
         run: |
           cd Code
-          echo "yes" | python -m nuitka \
-            --standalone \
-            --windows-console-mode=attach \
-            --enable-plugin=tk-inter \
-            --windows-icon-from-ico=data/icon.ico \
-            --include-data-files=data/dis_logo.jpg=data/dis_logo.jpg \
-            --include-data-files=data/icon.png=data/icon.png \
-            --include-data-files=data/icon.ico=data/icon.ico \
-            --include-package=customtkinter \
-            --include-package=fpdf \
-            --include-package=PIL \
-            --output-dir=dist \
-            --output-filename=DIS_PumpSystem \
+          pyinstaller --noconfirm --onedir --windowed \
+            --name "DIS_PumpSystem" \
+            --icon "data/icon.ico" \
+            --add-data "data/dis_logo.jpg;data" \
+            --add-data "data/icon.png;data" \
+            --add-data "data/icon.ico;data" \
+            --collect-all customtkinter \
+            --paths . \
+            --paths app \
+            --paths components \
+            --paths data \
+            --hidden-import config \
+            --hidden-import layout \
+            --hidden-import icon_choice \
+            --hidden-import theme \
+            --hidden-import main \
+            --hidden-import paths \
+            --hidden-import segmented_button \
+            --hidden-import customer_info_frame \
+            --hidden-import step_reco_tab \
+            --hidden-import step_frame \
+            --hidden-import reco_frame \
+            --hidden-import timer_frame \
+            --hidden-import buttons_frame \
+            --hidden-import logo_frame \
+            --hidden-import notes_frame \
+            --hidden-import testnumber_frame \
+            --hidden-import save_file \
+            --hidden-import pdf_exporter \
             run.py
-
-      - name: Rename output folder
-        shell: bash
-        run: mv "Code/dist/run.dist" "Code/dist/DIS_PumpSystem"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
